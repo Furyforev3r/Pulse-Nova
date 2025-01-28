@@ -9,12 +9,21 @@ local hitFeedback = "No hits yet"
 local notes = {}
 local misses = 0
 local currentTime = 0
+local phaseData = nil
+local music = nil
 
 function Game:load()
-    local phaseData = self:loadPhase("example.json")
+    phaseData = self:loadPhase("example.json")
+
+    if phaseData.music then
+        music = love.audio.newSource(phaseData.music, "stream")
+        music:setLooping(true)
+        music:play()
+    end
 
     config.noteSpeed = phaseData.noteSpeed
     config.hitZoneY = phaseData.hitZoneY
+    config.columns = phaseData.columns
     config.hitWindows = phaseData.hitWindows
 
     for _, noteData in ipairs(phaseData.notes) do
