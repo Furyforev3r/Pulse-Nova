@@ -11,6 +11,7 @@ local misses = 0
 local currentTime = 0
 local phaseData = nil
 local music = nil
+local background = nil
 
 function Game:load()
     phaseData = self:loadPhase("example.json")
@@ -28,6 +29,15 @@ function Game:load()
 
     for _, noteData in ipairs(phaseData.notes) do
         table.insert(notes, Note:new(noteData.column, noteData.time))
+    end
+
+    if phaseData.background then
+        if phaseData.background:match("%.ogv$") then
+            background = love.graphics.newVideo(phaseData.background)
+            background:play()
+        elseif phaseData.background:match("%.png$") or phaseData.background:match("%.jpg$") then
+            background = love.graphics.newImage(phaseData.background)
+        end
     end
 end
 
@@ -50,6 +60,11 @@ function Game:update(dt)
             end
         end
     end
+
+    if background and background:type() == "Video" and not background:isPlaying() then
+        background:rewind()
+        background:play()
+    end
 end
 
 function Game:keypressed(key)
@@ -65,6 +80,14 @@ function Game:keypressed(key)
 end
 
 function Game:draw()
+    if background then
+        if background:type() == "Video" then
+            love.graphics.draw(background, 0, 0, 0, love.graphics.getWidth() / background:getWidth(), love.graphics.getHeight() / background:getHeight())
+        else
+            love.graphics.draw(background, 0, 0, 0, love.graphics.getWidth() / background:getWidth(), love.graphics.getHeight() / background:getHeight())
+        end
+    end
+
     love.graphics.print(fpsText, 10, 10)
     love.graphics.print("Feedback: " .. hitFeedback, 10, 30)
     love.graphics.print("CurrentTime: " .. currentTime, 10, 50)
