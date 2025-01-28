@@ -11,15 +11,12 @@ local misses = 0
 local currentTime = 0
 
 function Game:load()
-    -- Carrega o JSON da fase
     local phaseData = self:loadPhase("example.json")
 
-    -- Configura a velocidade das notas e a hitzone
     config.noteSpeed = phaseData.noteSpeed
     config.hitZoneY = phaseData.hitZoneY
     config.hitWindows = phaseData.hitWindows
 
-    -- Carrega as notas
     for _, noteData in ipairs(phaseData.notes) do
         table.insert(notes, Note:new(noteData.column, noteData.time))
     end
