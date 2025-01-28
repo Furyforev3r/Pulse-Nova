@@ -1,6 +1,7 @@
 {
     "noteSpeed": 300,
     "hitZoneY": 350,
+    "columns": [200, 250, 300, 350],
     "hitWindows": {
         "sick": 0.03,
         "good": 0.08,
