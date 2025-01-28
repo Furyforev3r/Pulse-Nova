@@ -1,4 +1,4 @@
-local config = require "src.config"
+local config = require("src.config")
 
 local Note = {}
 Note.__index = Note

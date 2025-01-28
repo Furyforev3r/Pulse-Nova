@@ -10,7 +10,7 @@ config.hitWindows = {
     ok = 0.15
 }
 
-config.hitSize = 100
+config.hitSize = 50
 config.hitZoneY = 350
 
 return config
