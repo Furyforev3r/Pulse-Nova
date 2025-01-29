@@ -12,6 +12,7 @@ local currentTime = 0
 local phaseData = nil
 local music = nil
 local background = nil
+local hitZoneColor = {1, 1, 1}
 
 function Game:load()
     phaseData = self:loadPhase("example.json")
@@ -73,6 +74,16 @@ function Game:keypressed(key)
             if note:isHittable(config.hitZoneY, config.hitWindows) then
                 hitFeedback = note:getHitFeedback(currentTime, config.hitWindows)
                 note.hit = true
+
+                if hitFeedback:match("Sick!") then
+                    hitZoneColor = {0, 0, 1}
+                elseif hitFeedback:match("Good!") then
+                    hitZoneColor = {0, 1, 0}
+                elseif hitFeedback:match("Ok!") then
+                    hitZoneColor = {1, 1, 0}
+                elseif hitFeedback:match("Bad!") then
+                    hitZoneColor = {1, 0, 0}
+                end
                 break
             end
         end
@@ -93,7 +104,7 @@ function Game:draw()
     love.graphics.print("CurrentTime: " .. currentTime, 10, 50)
     love.graphics.print("Misses: " .. misses, 10, 70)
 
-    love.graphics.setColor(0, 1, 0)
+    love.graphics.setColor(hitZoneColor)
     love.graphics.line(0, config.hitZoneY, love.graphics.getWidth(), config.hitZoneY)
 
     love.graphics.setColor(1, 1, 1)
