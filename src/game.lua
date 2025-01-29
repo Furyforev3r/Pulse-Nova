@@ -23,6 +23,14 @@ function Game:load()
         music:play()
     end
 
+    if phaseData.hitSound then
+        config.hitSound = phaseData.hitSound
+    end
+
+    if phaseData.missSound then
+        config.missSound = phaseData.missSound
+    end
+
     config.noteSpeed = phaseData.noteSpeed
     config.hitZoneY = phaseData.hitZoneY
     config.columns = phaseData.columns
@@ -59,6 +67,10 @@ function Game:update(dt)
             if note.y > love.graphics.getHeight() then
                 misses = misses + 1
                 note.hit = true
+
+                missSound = love.audio.newSource(config.missSound, "stream")
+                missSound:play()
+
                 hitZoneColor = {1, 0, 0}
             end
         end
@@ -76,6 +88,9 @@ function Game:keypressed(key)
             if note:isHittable(config.hitZoneY, currentTime, config.hitWindows) then
                 hitFeedback = note:getHitFeedback(currentTime, config.hitWindows)
                 note.hit = true
+
+                hitSound = love.audio.newSource(config.hitSound, "stream")
+                hitSound:play()
 
                 if hitFeedback:match("Sick!") then
                     hitZoneColor = {0, 0, 1}
