@@ -108,6 +108,10 @@ function Game:draw()
     love.graphics.setColor(hitZoneColor)
     love.graphics.line(0, config.hitZoneY, love.graphics.getWidth(), config.hitZoneY)
 
+    for _, column in ipairs(config.columns) do
+        love.graphics.rectangle("line", column, config.hitZoneY - 10, 50, 20)
+    end
+
     love.graphics.setColor(1, 1, 1)
     for _, note in ipairs(notes) do
         if not note.hit then

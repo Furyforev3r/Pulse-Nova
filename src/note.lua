@@ -39,9 +39,9 @@ function Note:draw(columns)
     local x = columns[self.column]
     love.graphics.rectangle("fill", x, self.y, 50, 20)
 
-    local hitboxY1 = config.hitZoneY - config.hitSize
-    local hitboxY2 = config.hitZoneY + config.hitSize
-    love.graphics.rectangle("line", x, hitboxY1, 50, hitboxY2 - hitboxY1)
+    -- local hitboxY1 = config.hitZoneY - config.hitSize
+    -- local hitboxY2 = config.hitZoneY + config.hitSize
+    -- love.graphics.rectangle("line", x, hitboxY1, 50, hitboxY2 - hitboxY1)
 end
 
 return Note
