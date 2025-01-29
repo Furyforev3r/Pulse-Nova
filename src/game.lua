@@ -68,7 +68,7 @@ function Game:update(dt)
                 misses = misses + 1
                 note.hit = true
 
-                missSound = love.audio.newSource(config.missSound, "stream")
+                missSound = love.audio.newSource(config.missSound, "static")
                 missSound:play()
 
                 hitZoneColor = {1, 0, 0}
@@ -89,7 +89,8 @@ function Game:keypressed(key)
                 hitFeedback = note:getHitFeedback(currentTime, config.hitWindows)
                 note.hit = true
 
-                hitSound = love.audio.newSource(config.hitSound, "stream")
+                hitSound = love.audio.newSource(config.hitSound, "static")
+                hitSound:setVolume(2)
                 hitSound:play()
 
                 if hitFeedback:match("Sick!") then
