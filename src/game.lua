@@ -58,6 +58,7 @@ function Game:update(dt)
             if note.y > love.graphics.getHeight() then
                 misses = misses + 1
                 note.hit = true
+                hitZoneColor = {1, 0, 0}
             end
         end
     end
@@ -82,7 +83,7 @@ function Game:keypressed(key)
                 elseif hitFeedback:match("Ok!") then
                     hitZoneColor = {1, 1, 0}
                 elseif hitFeedback:match("Bad!") then
-                    hitZoneColor = {1, 0, 0}
+                    hitZoneColor = {1, 0.5, 0}
                 end
                 break
             end
