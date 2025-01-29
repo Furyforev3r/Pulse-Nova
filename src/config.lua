@@ -7,7 +7,7 @@ config.missSound = "/assets/sounds/miss-sound.wav"
 config.noteSpeed = 300
 
 config.hitWindows = {
-    sick = 0.03,
+    sick = 0.04,
     good = 0.08,
     ok = 0.15
 }

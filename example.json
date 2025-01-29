@@ -3,7 +3,7 @@
     "hitZoneY": 350,
     "columns": [200, 250, 300, 350],
     "hitWindows": {
-        "sick": 0.03,
+        "sick": 0.04,
         "good": 0.08,
         "ok": 0.15
     },
