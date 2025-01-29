@@ -90,7 +90,6 @@ function Game:keypressed(key)
                 note.hit = true
 
                 hitSound = love.audio.newSource(config.hitSound, "static")
-                hitSound:setVolume(2)
                 hitSound:play()
 
                 if hitFeedback:match("Sick!") then
