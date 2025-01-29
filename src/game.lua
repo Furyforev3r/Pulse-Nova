@@ -29,7 +29,8 @@ function Game:load()
     config.hitWindows = phaseData.hitWindows
 
     for _, noteData in ipairs(phaseData.notes) do
-        table.insert(notes, Note:new(noteData.column, noteData.time))
+        local spawnTime = noteData.time - (config.hitZoneY / config.noteSpeed)
+        table.insert(notes, Note:new(noteData.column, spawnTime, noteData.time))
     end
 
     if phaseData.background then
@@ -72,7 +73,7 @@ end
 function Game:keypressed(key)
     for _, note in ipairs(notes) do
         if not note.hit and config.keys[note.column] == key then
-            if note:isHittable(config.hitZoneY, config.hitWindows) then
+            if note:isHittable(config.hitZoneY, currentTime, config.hitWindows) then
                 hitFeedback = note:getHitFeedback(currentTime, config.hitWindows)
                 note.hit = true
 
