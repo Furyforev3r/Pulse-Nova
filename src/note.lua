@@ -29,13 +29,17 @@ function Note:getHitFeedback(currentTime, hitWindows)
     local timeDifference = math.abs(currentTime - expectedHitTime)
 
     if timeDifference <= hitWindows.sick then
-        return "Sick! " .. timeDifference .. " / " .. hitWindows.sick
+        -- return "Sick! " .. timeDifference .. " / " .. hitWindows.sick
+        return "Sick! "
     elseif timeDifference <= hitWindows.good then
-        return "Good! " .. timeDifference .. " / " .. hitWindows.good
+        -- return "Good! " .. timeDifference .. " / " .. hitWindows.good
+        return "Good! "
     elseif timeDifference <= hitWindows.ok then
-        return "Ok! " .. timeDifference .. " / " .. hitWindows.ok
+        -- return "Ok! " .. timeDifference .. " / " .. hitWindows.ok
+        return "Ok! "
     else
-        return "Bad! " .. timeDifference
+        -- return "Bad! " .. timeDifference
+        return "Bad! "
     end
 end
 

@@ -6,6 +6,7 @@ local config = require("src.config")
 local Game = {}
 local fpsText = "FPS: 0"
 local hitFeedback = "No hits yet"
+local feedbackAlpha = 0
 local notes = {}
 local misses = 0
 local currentTime = 0
@@ -60,6 +61,10 @@ function Game:update(dt)
     fpsText = "FPS: " .. love.timer.getFPS()
     currentTime = currentTime + dt
 
+    if feedbackAlpha > 0 then
+        feedbackAlpha = feedbackAlpha - dt
+    end
+
     for _, note in ipairs(notes) do
         if not note.hit then
             note:update(dt, currentTime, config.noteSpeed)
@@ -87,6 +92,7 @@ function Game:keypressed(key)
         if not note.hit and config.keys[note.column] == key then
             if note:isHittable(config.hitZoneY, currentTime, config.hitWindows) then
                 hitFeedback = note:getHitFeedback(currentTime, config.hitWindows)
+                feedbackAlpha = 1
                 note.hit = true
 
                 hitSound = love.audio.newSource(config.hitSound, "static")
@@ -117,9 +123,26 @@ function Game:draw()
     end
 
     love.graphics.print(fpsText, 10, 10)
-    love.graphics.print("Feedback: " .. hitFeedback, 10, 30)
-    love.graphics.print("CurrentTime: " .. currentTime, 10, 50)
-    love.graphics.print("Misses: " .. misses, 10, 70)
+    love.graphics.setColor(1, 1, 1, feedbackAlpha)
+    love.graphics.print("Feedback: " .. hitFeedback, love.graphics.getWidth() - 150, love.graphics.getHeight() / 2)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.print("CurrentTime: " .. currentTime, 10, 30)
+    love.graphics.print("Misses: " .. misses, 10, 50)
+
+    if phaseData.name then
+        local font = love.graphics.getFont()
+        local textWidth = font:getWidth(phaseData.name)
+        love.graphics.print(phaseData.name, (love.graphics.getWidth() - textWidth) / 2, 10)
+
+        if phaseData.authors then
+            local smallFont = love.graphics.newFont(font:getHeight() * 0.8)
+            love.graphics.setFont(smallFont)
+            local authorsText = "By: " .. table.concat(phaseData.authors, ", ")
+            local authorsWidth = smallFont:getWidth(authorsText)
+            love.graphics.print(authorsText, (love.graphics.getWidth() - authorsWidth) / 2, 30)
+            love.graphics.setFont(font)
+        end
+    end
 
     love.graphics.setColor(hitZoneColor)
     love.graphics.line(0, config.hitZoneY, love.graphics.getWidth(), config.hitZoneY)
