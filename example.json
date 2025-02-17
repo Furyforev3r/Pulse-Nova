@@ -10,17 +10,17 @@
         "ok": 0.15
     },
     "notes": [
-        {"column": 1, "time": 1.0},
-        {"column": 2, "time": 1.5},
-        {"column": 3, "time": 2.0},
-        {"column": 4, "time": 2.5},
-        {"column": 1, "time": 3.0},
-        {"column": 2, "time": 3.5},
-        {"column": 3, "time": 4.0},
-        {"column": 4, "time": 4.5},
-        {"column": 1, "time": 5.0},
-        {"column": 2, "time": 5.5},
-        {"column": 3, "time": 6.0},
-        {"column": 4, "time": 6.5}
+        {"column": 1, "time": 2.0},
+        {"column": 2, "time": 2.5},
+        {"column": 3, "time": 3.0, "holdTime": 1},
+        {"column": 4, "time": 3.5},
+        {"column": 1, "time": 4.0},
+        {"column": 2, "time": 4.5},
+        {"column": 3, "time": 5.0},
+        {"column": 4, "time": 5.5},
+        {"column": 1, "time": 6.0},
+        {"column": 2, "time": 6.5},
+        {"column": 3, "time": 7.0},
+        {"column": 4, "time": 7.5}
     ]
 }

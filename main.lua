@@ -15,3 +15,7 @@ end
 function love.draw()
     Game:draw()
 end
+
+function love.keyreleased(key)
+    Game:keyreleased(key)
+end

@@ -1,6 +1,6 @@
 local json = require("libs.dkjson")
-
 local Note = require("src.note")
+local HoldNote = require("src.holdNote")
 local config = require("src.config")
 
 local Game = {}
@@ -14,6 +14,8 @@ local phaseData = nil
 local music = nil
 local background = nil
 local hitZoneColor = {1, 1, 1}
+local hitSoundPath = config.hitSound
+local missSoundPath = config.missSound
 
 function Game:load()
     phaseData = self:loadPhase("example.json")
@@ -24,14 +26,6 @@ function Game:load()
         music:play()
     end
 
-    if phaseData.hitSound then
-        config.hitSound = phaseData.hitSound
-    end
-
-    if phaseData.missSound then
-        config.missSound = phaseData.missSound
-    end
-
     config.noteSpeed = phaseData.noteSpeed
     config.hitZoneY = phaseData.hitZoneY
     config.columns = phaseData.columns
@@ -39,7 +33,12 @@ function Game:load()
 
     for _, noteData in ipairs(phaseData.notes) do
         local spawnTime = noteData.time - (config.hitZoneY / config.noteSpeed)
-        table.insert(notes, Note:new(noteData.column, spawnTime, noteData.time))
+        
+        if noteData.holdTime then
+            table.insert(notes, HoldNote:new(noteData.column, spawnTime, noteData.time, noteData.holdTime))    
+        else
+            table.insert(notes, Note:new(noteData.column, spawnTime, noteData.time))
+        end
     end
 
     if phaseData.background then
@@ -57,6 +56,18 @@ function Game:loadPhase(filename)
     return json.decode(file)
 end
 
+function Game:updateHitZoneColor(feedback)
+    if feedback:match("Sick!") then
+        hitZoneColor = {0, 0, 1}
+    elseif feedback:match("Good!") then
+        hitZoneColor = {0, 1, 0}
+    elseif feedback:match("Ok!") then
+        hitZoneColor = {1, 1, 0}
+    elseif feedback:match("Bad!") then
+        hitZoneColor = {1, 0.5, 0}
+    end
+end
+
 function Game:update(dt)
     fpsText = "FPS: " .. love.timer.getFPS()
     currentTime = currentTime + dt
@@ -69,13 +80,23 @@ function Game:update(dt)
         if not note.hit then
             note:update(dt, currentTime, config.noteSpeed)
 
-            if note.y > love.graphics.getHeight() then
+            if note.holding then
+                if currentTime < note.holdTime then
+                    note.hit = true
+                end
+            end
+
+            if not note.holdTime and note.y > love.graphics.getHeight() then
                 misses = misses + 1
                 note.hit = true
-
-                missSound = love.audio.newSource(config.missSound, "static")
+                local missSound = love.audio.newSource(missSoundPath, "static")
                 missSound:play()
-
+                hitZoneColor = {1, 0, 0}
+            elseif note.holdTime and not note.holding and note.posY > love.graphics.getHeight() then
+                misses = misses + 1
+                note.hit = true
+                local missSound = love.audio.newSource(missSoundPath, "static")
+                missSound:play()
                 hitZoneColor = {1, 0, 0}
             end
         end
@@ -93,33 +114,33 @@ function Game:keypressed(key)
             if note:isHittable(config.hitZoneY, currentTime, config.hitWindows) then
                 hitFeedback = note:getHitFeedback(currentTime, config.hitWindows)
                 feedbackAlpha = 1
-                note.hit = true
 
-                hitSound = love.audio.newSource(config.hitSound, "static")
-                hitSound:play()
-
-                if hitFeedback:match("Sick!") then
-                    hitZoneColor = {0, 0, 1}
-                elseif hitFeedback:match("Good!") then
-                    hitZoneColor = {0, 1, 0}
-                elseif hitFeedback:match("Ok!") then
-                    hitZoneColor = {1, 1, 0}
-                elseif hitFeedback:match("Bad!") then
-                    hitZoneColor = {1, 0.5, 0}
+                if note.holdTime then
+                    note:startHold()
+                else
+                    note.hit = true
                 end
+                
+                local hitSound = love.audio.newSource(hitSoundPath, "static")
+                hitSound:play()
+                self:updateHitZoneColor(hitFeedback)
                 break
             end
         end
     end
 end
 
+function Game:keyreleased(key)
+    for _, note in ipairs(notes) do
+        if not note.hit and note.holdTime and config.keys[note.column] == key then
+            note:stopHold()
+        end
+    end
+end
+
 function Game:draw()
     if background then
-        if background:type() == "Video" then
-            love.graphics.draw(background, 0, 0, 0, love.graphics.getWidth() / background:getWidth(), love.graphics.getHeight() / background:getHeight())
-        else
-            love.graphics.draw(background, 0, 0, 0, love.graphics.getWidth() / background:getWidth(), love.graphics.getHeight() / background:getHeight())
-        end
+        love.graphics.draw(background, 0, 0, 0, love.graphics.getWidth() / background:getWidth(), love.graphics.getHeight() / background:getHeight())
     end
 
     love.graphics.print(fpsText, 10, 10)
