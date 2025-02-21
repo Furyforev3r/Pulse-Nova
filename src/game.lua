@@ -88,16 +88,20 @@ function Game:update(dt)
 
             if not note.holdTime and note.y > love.graphics.getHeight() then
                 misses = misses + 1
+                feedbackAlpha = 1
+                hitFeedback = "Miss!"
                 note.hit = true
                 local missSound = love.audio.newSource(missSoundPath, "static")
                 missSound:play()
-                hitZoneColor = {1, 0, 0}
+                hitZoneColor = {0.5, 0.5, 0.5}
             elseif note.holdTime and not note.holding and note.posY > love.graphics.getHeight() then
                 misses = misses + 1
+                feedbackAlpha = 1
+                hitFeedback = "Miss!"
                 note.hit = true
                 local missSound = love.audio.newSource(missSoundPath, "static")
                 missSound:play()
-                hitZoneColor = {1, 0, 0}
+                hitZoneColor = {0.5, 0.5, 0.5}
             end
         end
     end
@@ -166,7 +170,7 @@ function Game:draw()
     end
 
     love.graphics.setColor(hitZoneColor)
-    love.graphics.line(0, config.hitZoneY, love.graphics.getWidth(), config.hitZoneY)
+    -- love.graphics.line(0, config.hitZoneY, love.graphics.getWidth(), config.hitZoneY)
 
     for _, column in ipairs(config.columns) do
         love.graphics.rectangle("line", column, config.hitZoneY - 10, 50, 20)
