@@ -18,7 +18,7 @@ local hitSoundPath = config.hitSound
 local missSoundPath = config.missSound
 
 function Game:load()
-    phaseData = self:loadPhase("example.json")
+    phaseData = self:loadPhase("testing/bad.json")
 
     if phaseData.music then
         music = love.audio.newSource(phaseData.music, "stream")
