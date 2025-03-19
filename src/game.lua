@@ -20,40 +20,45 @@ local missSoundPath = config.missSound
 function Game:load()
     phaseData = self:loadPhase("testing/bad.json")
 
-    if phaseData.music then
+    if phaseData and phaseData.music then
         music = love.audio.newSource(phaseData.music, "stream")
         music:setLooping(true)
         music:play()
     end
 
-    config.noteSpeed = phaseData.noteSpeed
-    config.hitZoneY = phaseData.hitZoneY
-    config.columns = phaseData.columns
-    config.hitWindows = phaseData.hitWindows
+    if phaseData then
+        config.noteSpeed = phaseData.noteSpeed
+        config.hitZoneY = phaseData.hitZoneY
+        config.columns = phaseData.columns
+        config.hitWindows = phaseData.hitWindows
 
-    for _, noteData in ipairs(phaseData.notes) do
-        local spawnTime = noteData.time - (config.hitZoneY / config.noteSpeed)
-        
-        if noteData.holdTime then
-            table.insert(notes, HoldNote:new(noteData.column, spawnTime, noteData.time, noteData.holdTime))    
-        else
-            table.insert(notes, Note:new(noteData.column, spawnTime, noteData.time))
+        for _, noteData in ipairs(phaseData.notes) do
+            local spawnTime = noteData.time - (config.hitZoneY / config.noteSpeed)
+            
+            if noteData.holdTime then
+                table.insert(notes, HoldNote:new(noteData.column, spawnTime, noteData.time, noteData.holdTime))    
+            else
+                table.insert(notes, Note:new(noteData.column, spawnTime, noteData.time))
+            end
         end
-    end
 
-    if phaseData.background then
-        if phaseData.background:match("%.ogv$") then
-            background = love.graphics.newVideo(phaseData.background)
-            background:play()
-        elseif phaseData.background:match("%.png$") or phaseData.background:match("%.jpg$") then
-            background = love.graphics.newImage(phaseData.background)
+        if phaseData.background then
+            if phaseData.background:match("%.ogv$") then
+                background = love.graphics.newVideo(phaseData.background)
+                background:play()
+            elseif phaseData.background:match("%.png$") or phaseData.background:match("%.jpg$") then
+                background = love.graphics.newImage(phaseData.background)
+            end
         end
     end
 end
 
 function Game:loadPhase(filename)
     local file = love.filesystem.read(filename)
-    return json.decode(file)
+    if file then
+        return json.decode(file)
+    end
+    return nil
 end
 
 function Game:updateHitZoneColor(feedback)
@@ -154,7 +159,7 @@ function Game:draw()
     love.graphics.print("CurrentTime: " .. currentTime, 10, 30)
     love.graphics.print("Misses: " .. misses, 10, 50)
 
-    if phaseData.name then
+    if phaseData and phaseData.name then
         local font = love.graphics.getFont()
         local textWidth = font:getWidth(phaseData.name)
         love.graphics.print(phaseData.name, (love.graphics.getWidth() - textWidth) / 2, 10)
